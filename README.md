@@ -12,7 +12,7 @@
 
 </div>
 
-> **Status:** Phase 7 (multiple linear regression). Streamlit pages have not been
+> **Status:** Phase 8 (classification and probability prediction). Streamlit pages have not been
 > implemented; sections below describe the approved plan. No analysis results are reported.
 
 ## About

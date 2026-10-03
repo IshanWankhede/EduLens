@@ -197,9 +197,9 @@ Notation: n = sample size, x̄ = sample mean, s = sample SD, α = significance l
 - **Formula (softmax):** P(y = k | x) = exp(β_kᵀx) / Σⱼ exp(β_jᵀx); coefficients fitted by (regularized) maximum likelihood. Coefficient exp(β) = odds ratio relative to the reference class for a one-unit change.
 - **Assumptions:** Independent observations; correct specification (log-odds linear in predictors); no severe multicollinearity; adequate sample per class; categories mutually exclusive.
 - **Variables:** Model A features; Model B = A + G1 + G2. The target category is derived from G3 using documented thresholds.
-- **Imbalance handling:** Report class counts; consider `class_weight` only if justified; report macro-F1 and a majority-class baseline.
+- **Imbalance handling:** Report class counts; the verified Portuguese file has Low=100, Medium=355, High=194. The implementation reports per-class scores, macro-F1, and the training-majority baseline beside accuracy. No class weighting is applied by default.
 - **Interpretation:** "The model estimates a p% probability of the High category for this profile. This is an estimate based on the dataset, not a guarantee."
-- **Implementation:** scikit-learn `LogisticRegression` inside `Pipeline`; statsmodels `MNLogit` optionally for coefficient p-values/CIs **[VERIFY convergence with the encoded features]**. Regularization settings are stated (scikit-learn applies L2 by default; this affects coefficient interpretation and p-values).
+- **Implementation:** scikit-learn `LogisticRegression` inside a leakage-safe `Pipeline`; numeric/ordinal fields use median imputation and scaling, while binary/nominal fields use most-frequent imputation and one-hot encoding. The default model uses L2 regularization (`C=1.0`), `lbfgs`, no class weights, and a 1,000-iteration limit. Coefficients/odds ratios describe model contribution, not causation. statsmodels `MNLogit` is attempted on the training split for unregularized p-values; convergence is reported, and p-values are omitted if it does not converge.
 
 ### 20. Model Evaluation Metrics
 - **Purpose:** Measure how well predicted classes match the actual ones on unseen data.
@@ -210,7 +210,8 @@ Notation: n = sample size, x̄ = sample mean, s = sample SD, α = significance l
   - F1_k = 2·Precision_k·Recall_k / (Precision_k + Recall_k)
   - Macro-F1 = mean of F1_k
 - **Probability quality (optional):** log-loss, Brier score, calibration plot.
-- **Methodology:** Stratified train/test split (fixed seed), stratified k-fold CV (mean ± SD), pipeline-embedded preprocessing, threshold computation not leaking test data. Compare to majority-class baseline.
+- **Methodology:** Stratified train/test split (fixed seed), stratified k-fold CV (mean ± SD), pipeline-embedded preprocessing, threshold computation not leaking test data. Compare to majority-class baseline. The current category method uses the configured fixed bands; no quantile option is implemented.
+- **Scores:** Accuracy, per-class precision/recall/F1, macro-F1, confusion matrix, majority-class baseline accuracy and macro-F1, log-loss, and multiclass Brier score are reported. Brier score is the mean sum of squared class-probability errors per observation.
 - **Assumptions:** Test data representative of the future use case; independent test rows. With few students per class, metrics are noisy: show CV spread.
 - **Model A vs B:** Same split and folds for both; report differences with spread. The expected larger benefit from G1/G2 (as noted by UCI) is shown only if the data demonstrates it.
 - **Interpretation:** "Accuracy alone can mislead when classes are imbalanced; see per-class recall and macro-F1."

@@ -45,3 +45,11 @@ PERFORMANCE_BANDS = {
     "MEDIUM_UPPER_INCLUSIVE": 13,
     "HIGH_LOWER_INCLUSIVE": 14,
 }
+
+# Feature sets are assembled exclusively from documented column roles; G3 is the target only.
+MODEL_A_FEATURES = tuple(
+    column
+    for column in NUMERIC_COLUMNS + ORDINAL_COLUMNS + NOMINAL_COLUMNS + BINARY_COLUMNS
+    if column not in LEAKY_COLUMNS
+)
+MODEL_B_FEATURES = MODEL_A_FEATURES + ("G1", "G2")
