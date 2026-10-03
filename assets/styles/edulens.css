@@ -17,11 +17,69 @@
   --shadow: 0 18px 50px rgba(0, 0, 0, 0.36);
   --radius: 22px;
   --radius-small: 14px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --card-padding: 22px;
   --focus: #e8c8ff;
   --positive: #77d6b1;
   --warning: #f2c879;
   --info: #b7a0d1;
   --blur: 18px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+*::-webkit-scrollbar,
+*::before::-webkit-scrollbar,
+*::after::-webkit-scrollbar {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+html,
+body,
+.stApp,
+[data-testid="stAppViewContainer"],
+[data-testid="stMain"] {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+html,
+body,
+.stApp,
+[data-testid="stAppViewContainer"],
+[data-testid="stMain"],
+[data-testid="stSidebar"] > div:first-child,
+[data-testid="stDataFrame"],
+[data-testid="stTable"] {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.stApp::-webkit-scrollbar,
+[data-testid="stAppViewContainer"]::-webkit-scrollbar,
+[data-testid="stMain"]::-webkit-scrollbar,
+[data-testid="stSidebar"] > div:first-child::-webkit-scrollbar,
+[data-testid="stDataFrame"]::-webkit-scrollbar,
+[data-testid="stTable"]::-webkit-scrollbar {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
 }
 
 html,
@@ -55,10 +113,18 @@ body,
 
 [data-testid="stAppViewContainer"] {
   background: transparent;
+  overflow-y: visible;
 }
 
 [data-testid="stHeader"] {
   background: transparent;
+}
+
+[data-testid="stMain"] {
+  min-width: 0;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior-y: contain;
 }
 
 [data-testid="stMainBlockContainer"] {
@@ -69,10 +135,12 @@ body,
   border: 1px solid var(--border);
   border-radius: 28px;
   box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.045);
-  margin: 1rem auto 2rem;
-  max-width: 1600px;
-  padding: clamp(1.25rem, 3vw, 2.5rem);
-  width: calc(100% - 2rem);
+  margin: var(--space-4) auto var(--space-6);
+  max-width: 1280px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  padding: clamp(var(--space-4), 2vw, var(--space-6));
+  width: min(1280px, calc(100% - var(--space-7)));
 }
 
 h1,
@@ -81,6 +149,16 @@ h3,
 h4 {
   color: var(--text);
   letter-spacing: -0.035em;
+}
+
+p,
+li,
+td,
+th,
+button,
+a {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 h1 {
@@ -120,7 +198,11 @@ input:focus-visible,
   border: 1px solid rgba(245, 230, 248, 0.08);
   border-radius: 26px;
   margin: 0.5rem;
+  max-height: calc(100vh - 1rem);
   min-height: calc(100vh - 1rem);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 0.85rem 0.75rem;
 }
 
@@ -128,6 +210,7 @@ input:focus-visible,
   display: flex;
   flex-direction: column;
   min-height: 100%;
+  min-width: 0;
 }
 
 .st-key-el-sidebar-navigation {
@@ -235,13 +318,17 @@ input:focus-visible,
 }
 
 .el-glass-card {
-  padding: 1.25rem 1.4rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  padding: var(--card-padding);
 }
 
 .el-metric,
 .el-probability {
   min-height: 142px;
-  padding: 1.25rem 1.4rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  padding: var(--card-padding);
   transition: transform 190ms ease, opacity 190ms ease;
 }
 
@@ -456,7 +543,7 @@ input:focus-visible,
 }
 
 .st-key-home-hero-actions {
-  margin: 0 0 2.4rem;
+  margin: 0;
 }
 
 .st-key-home-hero-actions [data-testid="stPageLink-NavLink"] {
@@ -488,7 +575,7 @@ input:focus-visible,
   flex-wrap: wrap;
   gap: 0.7rem 1.25rem;
   justify-content: space-between;
-  margin: 2.2rem 0 1rem;
+  margin: var(--space-4) 0 var(--space-3);
 }
 
 .el-home-section-heading h2 {
@@ -653,6 +740,25 @@ input:focus-visible,
   color: var(--primary) !important;
 }
 
+.stMainBlockContainer > [data-testid="stVerticalBlock"] {
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+[data-testid="stHorizontalBlock"] {
+  align-items: stretch;
+  min-width: 0;
+}
+
+[data-testid="stColumn"] {
+  min-width: 0;
+}
+
+[data-testid="stColumn"] > [data-testid="stVerticalBlock"] {
+  height: 100%;
+  min-width: 0;
+}
+
 .el-assumption-line {
   border-bottom: 1px solid rgba(245, 230, 248, 0.07);
   color: var(--muted);
@@ -739,6 +845,43 @@ input:focus-visible,
   border-radius: var(--radius-small);
   max-width: 100%;
   overflow-x: auto;
+  position: relative;
+}
+
+[data-testid="stDataFrame"]::after,
+[data-testid="stTable"]::after {
+  background: linear-gradient(90deg, transparent, rgba(17, 16, 20, 0.72));
+  bottom: 1px;
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  right: 1px;
+  top: 1px;
+  width: var(--space-3);
+  z-index: 2;
+}
+
+[data-testid="stTable"] table {
+  max-width: 100%;
+}
+
+[data-testid="stTable"] th,
+[data-testid="stTable"] td {
+  overflow-wrap: anywhere;
+}
+
+.js-plotly-plot,
+.js-plotly-plot .plot-container,
+.js-plotly-plot .svg-container {
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+[data-testid="stElementContainer"]:has(.js-plotly-plot),
+[data-testid="stElementContainer"]:has([data-testid="stDataFrame"]),
+[data-testid="stElementContainer"]:has([data-testid="stTable"]) {
+  max-width: 100%;
+  min-width: 0;
 }
 
 button,
@@ -790,18 +933,20 @@ button[kind="primary"],
 @media (max-width: 767px) {
   [data-testid="stMainBlockContainer"] {
     border-radius: 20px;
-    margin-top: 0.4rem;
-    padding: 1rem;
-    width: calc(100% - 0.8rem);
+    margin-top: var(--space-2);
+    padding: var(--space-4);
+    width: calc(100% - var(--space-4));
   }
 
   [data-testid="stHorizontalBlock"] {
     flex-wrap: wrap;
+    gap: var(--space-4);
   }
 
-  [data-testid="stHorizontalBlock"] > [data-testid="column"] {
+  [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
     flex: 1 1 100% !important;
-    min-width: min(100%, 18rem) !important;
+    max-width: 100%;
+    min-width: 0 !important;
   }
 
   .el-pipeline {
@@ -862,6 +1007,20 @@ button[kind="primary"],
   [data-testid="stTabs"] [data-baseweb="tab-list"] {
     max-width: 100%;
     overflow-x: auto;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"]:nth-child(4)) {
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"]:nth-child(4))
+    > [data-testid="stColumn"] {
+    flex: 1 1 calc((100% - var(--space-6)) / 3) !important;
+    max-width: calc((100% - var(--space-6)) / 3);
+    min-width: 0 !important;
   }
 }
 
