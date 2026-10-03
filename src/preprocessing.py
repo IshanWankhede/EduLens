@@ -176,12 +176,16 @@ def encode_nominal(
 
 
 def derive_performance_category(
-    dataframe: pd.DataFrame, grade_column: str = "G3"
+    dataframe: pd.DataFrame,
+    grade_column: str = "G3",
+    *,
+    thresholds: Mapping[str, int] | None = None,
 ) -> PerformanceCategoryResult:
-    """Derive Low/Medium/High labels using the fixed configured grade bands.
+    """Derive Low/Medium/High labels from configured or explicitly supplied fixed bands.
 
-    Scores below 10 are Low, 10 through 13 inclusive are Medium, and scores of at least 14 are
-    High. Missing or non-numeric scores remain unclassified; no rows are removed.
+    Thresholds must define contiguous integer bands: Low is below the shared low/medium
+    boundary, Medium includes the upper threshold, and High begins at the next score. Missing
+    or non-numeric scores remain unclassified; no rows are removed.
     """
     if grade_column not in dataframe.columns:
         raise DataValidationError(f"Grade column '{grade_column}' is missing.")
@@ -192,7 +196,23 @@ def derive_performance_category(
             f"Grade column '{grade_column}' contains {int(invalid.sum())} non-numeric value(s)."
         )
 
-    bands = config.PERFORMANCE_BANDS
+    bands = dict(config.PERFORMANCE_BANDS if thresholds is None else thresholds)
+    expected_keys = {
+        "LOW_UPPER_EXCLUSIVE",
+        "MEDIUM_LOWER_INCLUSIVE",
+        "MEDIUM_UPPER_INCLUSIVE",
+        "HIGH_LOWER_INCLUSIVE",
+    }
+    if set(bands) != expected_keys:
+        raise DataValidationError("Performance thresholds must define all four band boundaries.")
+    if (
+        bands["LOW_UPPER_EXCLUSIVE"] != bands["MEDIUM_LOWER_INCLUSIVE"]
+        or bands["HIGH_LOWER_INCLUSIVE"] != bands["MEDIUM_UPPER_INCLUSIVE"] + 1
+        or not 0 <= bands["LOW_UPPER_EXCLUSIVE"] <= bands["MEDIUM_UPPER_INCLUSIVE"] < 20
+    ):
+        raise DataValidationError(
+            "Performance thresholds must form contiguous integer bands within the 0–20 grade scale."
+        )
     labels = pd.Series(pd.NA, index=dataframe.index, dtype="string", name="PerformanceCategory")
     labels.loc[scores < bands["LOW_UPPER_EXCLUSIVE"]] = "Low"
     labels.loc[

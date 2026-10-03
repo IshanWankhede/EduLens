@@ -116,3 +116,32 @@ def test_derive_fixed_grade_bands_assigns_boundaries_and_counts_missing() -> Non
 def test_derive_performance_category_reports_invalid_grade_values() -> None:
     with pytest.raises(DataValidationError, match="non-numeric"):
         derive_performance_category(pd.DataFrame({"G3": ["unknown"]}))
+
+
+def test_derive_performance_category_accepts_valid_explicit_thresholds() -> None:
+    thresholds = {
+        "LOW_UPPER_EXCLUSIVE": 8,
+        "MEDIUM_LOWER_INCLUSIVE": 8,
+        "MEDIUM_UPPER_INCLUSIVE": 15,
+        "HIGH_LOWER_INCLUSIVE": 16,
+    }
+
+    result = derive_performance_category(
+        pd.DataFrame({"G3": [7, 8, 15, 16]}),
+        thresholds=thresholds,
+    )
+
+    assert result.categories.tolist() == ["Low", "Medium", "Medium", "High"]
+    assert result.class_counts == {"Low": 1, "Medium": 2, "High": 1}
+
+
+def test_derive_performance_category_rejects_non_contiguous_thresholds() -> None:
+    thresholds = {
+        "LOW_UPPER_EXCLUSIVE": 8,
+        "MEDIUM_LOWER_INCLUSIVE": 9,
+        "MEDIUM_UPPER_INCLUSIVE": 15,
+        "HIGH_LOWER_INCLUSIVE": 16,
+    }
+
+    with pytest.raises(DataValidationError, match="contiguous"):
+        derive_performance_category(pd.DataFrame({"G3": [10]}), thresholds=thresholds)
