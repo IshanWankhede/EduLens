@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+.mypy_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Secrets / local config
+.env
+.env.*
+.streamlit/secrets.toml
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Streamlit
+.streamlit/cache/
+
+# Generated models and artifacts
+models/*
+!models/.gitkeep
+*.joblib
+*.pkl
+
+# Temporary files
+*.tmp
+*.log
+tmp/
+
+# Local data
+# Raw/processed data are not committed by default. The UCI data is CC BY 4.0 and
+# can be redistributed with attribution, so remove these lines if you prefer to commit it.
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/README.md

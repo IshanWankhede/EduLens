@@ -1,0 +1,18 @@
+# EduLens runtime dependencies
+# Lower bounds are chosen for features we rely on; no upper caps are set.
+# After the first working install (Phase 11), freeze exact versions, e.g.:
+#   pip freeze > requirements.lock.txt
+
+streamlit>=1.36        # st.navigation / st.Page (custom multipage routing)
+pandas>=2.2
+numpy>=1.26
+scipy>=1.12
+statsmodels>=0.14      # OLS, ANOVA, Tukey HSD, diagnostics
+scikit-learn>=1.4      # pipelines, multinomial logistic regression, metrics
+matplotlib>=3.8
+seaborn>=0.13
+plotly>=5.20
+openpyxl>=3.1          # Excel upload support
+
+# Development / testing (move to requirements-dev.txt if preferred)
+pytest>=8.0
