@@ -12,8 +12,8 @@
 
 </div>
 
-> **Status:** Phase 2 (dataset ingestion and cleaning). Statistical analysis features and UI pages
-> have not been implemented; sections below describe the approved plan. No analysis results are reported.
+> **Status:** Phase 3 (descriptive statistics). Exploratory analysis and UI pages have not been
+> implemented; sections below describe the approved plan. No analysis results are reported.
 
 ## About
 

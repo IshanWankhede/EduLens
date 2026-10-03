@@ -50,10 +50,11 @@ Notation: n = sample size, x̄ = sample mean, s = sample SD, α = significance l
 
 ### 6. Quartiles
 - **Purpose:** Positional summary (Q1 = 25th, Q2 = median, Q3 = 75th percentile).
-- **Formula:** Linear-interpolation percentile (state the method used).
+- **Formula:** Linear-interpolation percentile.
 - **Assumptions:** Ordinal or numeric.
 - **Interpretation:** "25% of students are at or below Q1."
-- **Implementation:** `Series.quantile([.25,.5,.75])` (default linear interpolation, documented).
+- **Implementation:** `Series.quantile([.25,.5,.75], interpolation="linear")` (pandas default,
+  explicitly selected).
 
 ### 7. IQR (and outlier rule)
 - **Purpose:** Robust spread; outlier flagging.
@@ -64,10 +65,12 @@ Notation: n = sample size, x̄ = sample mean, s = sample SD, α = significance l
 
 ### 8. Skewness
 - **Purpose:** Asymmetry of distribution.
-- **Formula:** Sample skewness g₁ = m₃ / m₂^{3/2}, with adjusted Fisher–Pearson G₁ as in `pandas` (state which).
+- **Formula:** Adjusted Fisher–Pearson skewness
+  G₁ = √(n(n−1))/(n−2) · m₃/m₂^(3/2), where m₂ and m₃ are the second and third central moments
+  using denominator n. This is the bias-corrected coefficient returned by pandas `Series.skew()`.
 - **Assumptions:** Numeric; unstable for small n.
 - **Interpretation:** Positive → long right tail; negative → long left tail; near 0 → roughly symmetric. Rules of thumb are guidance only.
-- **Implementation:** `Series.skew()`.
+- **Implementation:** `Series.skew()`; equivalent to `scipy.stats.skew(..., bias=False)`.
 
 ---
 

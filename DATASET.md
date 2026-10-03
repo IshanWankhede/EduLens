@@ -103,7 +103,7 @@ rows are removed by Phase 2.
 | 27 | Dalc | Workday alcohol consumption 1–5 | Ordinal | predictor (sensitive) |
 | 28 | Walc | Weekend alcohol consumption 1–5 | Ordinal | predictor (sensitive) |
 | 29 | health | Current health 1 (very bad) – 5 (very good) | Ordinal | predictor |
-| 30 | absences | School absences, 0 to 93 (per UCI) | Integer | key predictor |
+| 30 | absences | School absences, 0 to 93 (as stated in UCI's variable description) | Integer | key predictor |
 | 31 | G1 | First-period grade, 0–20 | Integer | **Model B only** |
 | 32 | G2 | Second-period grade, 0–20 | Integer | **Model B only** |
 | 33 | G3 | Final grade, 0–20 (UCI: "output target") | Integer | **target** |
@@ -140,8 +140,9 @@ the loaded course file.
 - Duplicate check: rows are not guaranteed unique identifiers; exact duplicate rows are reported, not silently dropped.
 - G3 = 0 records: 15 in Portuguese and 38 in Mathematics. They are retained and flagged in the
   in-memory cleaned frame; no sensitivity-analysis behavior is added in this phase.
-- Observed `absences` ranges are 0–32 in Portuguese and 0–75 in Mathematics (the broader UCI
-  variable description allows values up to 93); inspect outliers with the IQR rule and report.
+- Observed `absences` ranges are 0–32 in Portuguese and 0–75 in Mathematics. UCI's variable
+  description states a range of 0–93; the observed maxima in these local files are lower. Inspect
+  outliers with the IQR rule and report.
 - The UCI page text shows encoding artifacts in dashes (e.g., "â€“"); this only affects the web text, but CSV encoding should be checked on load.
 - Ordinal coded variables (1–5 scales) are not true interval data; treatment (ordinal vs numeric) is stated wherever used.
 
