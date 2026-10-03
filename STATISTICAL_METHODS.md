@@ -232,5 +232,18 @@ Notation: n = sample size, x̄ = sample mean, s = sample SD, α = significance l
 - All numbers shown in the UI are computed live from the loaded data.
 - Every test panel includes assumptions, checks and alternatives.
 - Terminology: "association", "model contribution", "estimated probability"; never "causes".
+
+## Phase 10 implementation notes
+
+- Model evaluation uses the shared reproducibility settings in `src/config.py`: a 20% stratified
+  holdout, five stratified folds, and seed 42 by default. The sidebar lets users change the seed;
+  the holdout fraction and fold count are fixed configuration defaults, not observed results.
+- Regression diagnostics currently include residual-versus-fitted, Q–Q, leverage/Cook's distance,
+  VIF, Breusch–Pagan, and residual Shapiro–Wilk results. A separate scale–location plot is not
+  implemented yet.
+- Tukey HSD adjusts its within-ANOVA pairwise comparisons. There is no global multiplicity
+  correction across separate user-selected tests; interpret repeated testing accordingly.
+- The hypothesis interface reports selected test assumptions and available alternatives; an
+  alternative is suggested, not silently substituted for the selected test.
 - Missing data: reported; rows dropped or imputed only with a visible, documented method.
 - Reproducibility: fixed random seed in `config.py`; library versions recorded.

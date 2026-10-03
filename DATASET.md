@@ -141,8 +141,9 @@ the loaded course file.
 - G3 = 0 records: 15 in Portuguese and 38 in Mathematics. They are retained and flagged in the
   in-memory cleaned frame; no sensitivity-analysis behavior is added in this phase.
 - Observed `absences` ranges are 0–32 in Portuguese and 0–75 in Mathematics. UCI's variable
-  description states a range of 0–93; the observed maxima in these local files are lower. Inspect
-  outliers with the IQR rule and report.
+  description states a range of 0–93; the observed maxima in these local files are lower. These
+  observed ranges were checked against the supplied raw CSVs and are the values shown in the
+  summary table above. Inspect outliers with the IQR rule and report.
 - The UCI page text shows encoding artifacts in dashes (e.g., "â€“"); this only affects the web text, but CSV encoding should be checked on load.
 - Ordinal coded variables (1–5 scales) are not true interval data; treatment (ordinal vs numeric) is stated wherever used.
 

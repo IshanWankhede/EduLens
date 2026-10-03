@@ -437,8 +437,8 @@ def evaluate_model(
     data: pd.DataFrame,
     feature_set: FeatureSet = "A",
     *,
-    test_size: float = 0.2,
-    cv_folds: int = 5,
+    test_size: float = config.DEFAULT_TEST_SIZE,
+    cv_folds: int = config.DEFAULT_CV_FOLDS,
     seed: int = config.RANDOM_SEED,
 ) -> PredictionRun:
     """Fit and evaluate a feature set with a stratified holdout and stratified CV.
@@ -526,8 +526,8 @@ def evaluate_model(
 def compare_models(
     data: pd.DataFrame,
     *,
-    test_size: float = 0.2,
-    cv_folds: int = 5,
+    test_size: float = config.DEFAULT_TEST_SIZE,
+    cv_folds: int = config.DEFAULT_CV_FOLDS,
     seed: int = config.RANDOM_SEED,
 ) -> ModelComparison:
     """Compare Model A/B on identical stratified holdout rows and paired CV folds.

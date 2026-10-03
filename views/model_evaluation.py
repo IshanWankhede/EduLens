@@ -122,8 +122,8 @@ else:
         settings["alpha"],
         settings["thresholds"],
         seed,
-        0.2,
-        5,
+        config.DEFAULT_TEST_SIZE,
+        config.DEFAULT_CV_FOLDS,
     )
     dataset_key = f"{bundle.metadata.source}:{bundle.metadata.file_name}"
     try:
@@ -131,13 +131,14 @@ else:
             dataset_key,
             data,
             seed,
-            0.2,
-            5,
+            config.DEFAULT_TEST_SIZE,
+            config.DEFAULT_CV_FOLDS,
             settings_key,
         )
         st.caption(
             "Model A is factor-only. Model B explicitly adds G1/G2. Both use the same configured "
-            "stratified holdout and paired folds."
+            f"stratified holdout ({config.DEFAULT_TEST_SIZE:.0%} test split) and "
+            f"{config.DEFAULT_CV_FOLDS} paired folds."
         )
         _render_model_metrics("Model A (factor-only; no G1/G2/G3 features)", comparison.model_a)
         _render_model_metrics("Model B (explicitly includes G1/G2)", comparison.model_b)

@@ -95,8 +95,8 @@ else:
                     data,
                     feature_set,
                     seed,
-                    0.2,
-                    5,
+                    config.DEFAULT_TEST_SIZE,
+                    config.DEFAULT_CV_FOLDS,
                     settings_key,
                 )
                 st.caption(

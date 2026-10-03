@@ -25,7 +25,8 @@
 ```
 edulens/
 ├── app.py                      # entry: set_page_config, theme, sidebar, router
-├── views/                      # one render() per page (UI only)
+├── views/                      # Streamlit page scripts (UI only)
+│   ├── _analysis.py            # cached fitting/evaluation helpers
 │   ├── overview.py
 │   ├── dataset_explorer.py
 │   ├── descriptive_statistics.py
@@ -204,7 +205,10 @@ Rules:
 
 ## 10. Dependency Flow
 
-`views → ui.components, visualization, src modules → config`; `src` modules never import `views` or `streamlit` (except a thin caching wrapper layer in `data_loader`/`prediction`, or caching applied in views).
+`views → src statistical modules, visualization, and shared UI components → config`. Statistical
+analysis modules do not import Streamlit or views. The presentation-only modules
+`src/ui/theme.py` and `src/ui/components.py` do import Streamlit as shared UI helpers; data and
+model caching live in `app.py` and `views/_analysis.py`, not in the statistical modules.
 
 ```mermaid
 flowchart TB
@@ -219,12 +223,15 @@ flowchart TB
 
 ## 11. Streamlit Architecture Notes
 
-- **Routing:** `app.py` renders sidebar, reads the selected page, calls `views.<page>.render(bundle, settings)`.
-- **Caching:** `st.cache_data` for loading, cleaning and deterministic statistics (keyed on data hash and parameters); `st.cache_resource` for fitted model objects.
+- **Routing:** `app.py` creates `st.Page` entries for scripts under `views/` and runs them through `st.navigation`; pages are scripts, not `render(bundle, settings)` modules.
+- **Caching:** `st.cache_data` wraps UCI/upload loading in `app.py`; fitted OLS and prediction evaluations are cached through `st.cache_resource` helpers in `views/_analysis.py`, keyed by dataset and settings.
 - **State:** `st.session_state` holds the active `DatasetBundle`, uploaded-file hash and settings; changing the dataset invalidates dependent caches.
 - **CSS:** one stylesheet injected once via `st.markdown(unsafe_allow_html=True)`; variables on `:root`; Streamlit's internal class names are targeted sparingly, because they can change between versions.
-- **Error handling:** custom exceptions (`DataValidationError`, `InsufficientDataError`, `AssumptionWarning`) caught in a decorator that shows `st.error`/`st.warning` and logs details.
+- **Error handling:** expected loader and analysis exceptions are caught at the app/page boundary and shown as friendly `st.error`/`st.warning` messages; raw tracebacks are not rendered to users.
 - **Security:** user-provided text (column names, categories) is HTML-escaped before inclusion in custom HTML.
+- **Streamlit import boundary:** the statistical implementation stays Streamlit-free. The two
+  `src/ui/` presentation helpers are the documented UI-bound exception required by the shared
+  theme/component design; they contain no statistical calculations.
 
 ## 12. Testing Strategy
 
@@ -232,4 +239,4 @@ flowchart TB
 - Cross-check against SciPy/statsmodels results.
 - Leakage test for Model A feature names.
 - Validation tests for malformed CSVs.
-- Streamlit smoke test via `streamlit.testing.v1.AppTest` (verify availability for the pinned version).
+- Streamlit smoke tests use `streamlit.testing.v1.AppTest` for all 11 routes with the Portuguese course data and an invalid uploaded CSV.

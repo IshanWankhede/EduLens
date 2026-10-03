@@ -1,142 +1,122 @@
 <div align="center">
 
-# 🔍 EduLens
-### Student Academic Performance Intelligence
+# EduLens
+### Student Academic Performance Statistics
 
-*Discover the factors. Understand the patterns. Predict the probability.*
+*Explore distributions, associations, statistical tests, and estimated performance probabilities.*
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![Streamlit](https://img.shields.io/badge/Built%20with-Streamlit-FF4B4B)
-![Status](https://img.shields.io/badge/Status-In%20development-orange)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
 </div>
 
-> **Status:** Phase 8 (classification and probability prediction). Streamlit pages have not been
-> implemented; sections below describe the approved plan. No analysis results are reported.
-
-## About
-
-EduLens is an interactive statistical analysis platform that explores **which factors are statistically associated with student academic performance**, and uses probability and statistical models to estimate performance outcomes. It was built as a Probability & Statistics course project.
-
-Learning path: **Data → Descriptive Statistics → Probability → Hypothesis Testing → Correlation → Regression → Probability Prediction.**
-
-EduLens separates *correlation*, *statistical association*, *prediction* and *causation*. It never claims that a factor causes a grade.
-
-## Screenshots
-
-| Overview | Probability | Hypothesis Testing | Prediction |
-|---|---|---|---|
-| _placeholder_ | _placeholder_ | _placeholder_ | _placeholder_ |
-
-_Screenshots will be added after the UI is built._
+EduLens is a Probability & Statistics course project for exploring the UCI Student Performance
+dataset. It reports descriptive statistics, empirical probabilities, associations, hypothesis
+tests, regression estimates and classification performance. The observational data do not
+establish causation, and individual model probabilities are not guaranteed outcomes.
 
 ## Features
 
-- Dataset explorer with cleaning report (missing values, duplicates, outliers, before/after)
-- Descriptive statistics for user-selected variables
-- Exploratory visualizations (histograms, KDE, box, violin, scatter, heatmap)
-- Pearson and Spearman correlation with a selectable target
-- Probability calculator: P(A), P(B), P(A|B) with a configurable performance threshold
-- Bayes' theorem walkthrough using dataset frequencies
-- Hypothesis tests: t-test, one-way ANOVA (+ post-hoc), chi-square, each with assumptions
-- Confidence intervals (default 95%, adjustable)
-- Multiple linear regression with diagnostics
-- Estimated probabilities of Low / Medium / High performance
-- Model A (no G1/G2) vs Model B (with G1/G2) comparison
-- CSV upload for other datasets (e.g., a future college survey)
+- Overview and dataset explorer with search, filters, data types, missingness, cleaning report and
+  cleaned-CSV download.
+- Selectable descriptive statistics, EDA charts and Pearson/Spearman association analysis.
+- Conditional-probability calculator, Bayes walkthrough and normal, binomial and empirical
+  distribution summaries.
+- Welch/pooled t-test, one-way ANOVA with Tukey HSD, and chi-square test with assumptions and
+  alternative-test guidance.
+- OLS regression with coefficient intervals, residual and influence diagnostics, and optional
+  HC3 standard errors.
+- Low/Medium/High probability estimates, leakage-safe Model A and explicitly grade-informed
+  Model B, holdout metrics, stratified cross-validation and a majority-class baseline.
+- Portuguese primary dataset, separately selectable Mathematics dataset, and in-memory CSV upload.
 
-## Statistical Methods
+The fixed default grade bands are Low `< 10`, Medium `10–13` inclusive, and High `>= 14`; the
+sidebar allows the band cutoffs and random seed to be changed. The model evaluation uses a
+configured stratified 20% holdout and five-fold cross-validation by default. See
+[DATASET.md](DATASET.md), [STATISTICAL_METHODS.md](STATISTICAL_METHODS.md) and
+[REQUIREMENTS.md](REQUIREMENTS.md) for measured dataset facts, method details, and implementation
+status.
 
-Mean, median, mode, variance, SD, quartiles, IQR, skewness · Pearson & Spearman correlation · conditional probability · Bayes' theorem · normal/binomial/empirical distributions · confidence intervals · Welch's t-test · ANOVA · chi-square · OLS regression · multinomial logistic regression · accuracy, precision, recall, F1.
-Details: [STATISTICAL_METHODS.md](STATISTICAL_METHODS.md).
+## Screenshots
 
-## Architecture
+Screenshots have not been captured. The table below is intentionally left for manual additions.
 
-Self-contained Streamlit app; analysis logic in `src/`, UI in `views/`. See [ARCHITECTURE.md](ARCHITECTURE.md) for Mermaid diagrams.
+| Overview | Probability | Hypothesis Testing | Prediction |
+|---|---|---|---|
+| _capture manually_ | _capture manually_ | _capture manually_ | _capture manually_ |
 
-## Tech Stack
+See [docs/screenshots/README.md](docs/screenshots/README.md) for the exact capture list and
+filenames. No screenshots are generated or represented as actual app captures by this project.
 
-Python · Pandas · NumPy · SciPy · Statsmodels · scikit-learn · Matplotlib · Seaborn · Plotly · Streamlit · OpenPyXL · Git/GitHub
+## Requirements
 
-## Dataset
+- Python 3.11
+- The supplied local files in `data/raw/` for offline use. Their inventory, source and checksums
+  are documented in [data/README.md](data/README.md).
+- Internet access is not required when the local dataset files are present.
 
-**Student Performance** (Cortez, 2008), UCI Machine Learning Repository, CC BY 4.0.
-https://archive.ics.uci.edu/dataset/320/student+performance · DOI: 10.24432/C5TG7T
-See [DATASET.md](DATASET.md).
+## Install and run
 
-## Installation
+From the repository root:
 
-> Commands below are the planned workflow and will be validated in Phase 11.
-
-```bash
-git clone <REPOSITORY_URL>        # placeholder: repository URL not yet created
-cd edulens
-python -m venv .venv
-# Windows: .venv\Scripts\activate    macOS/Linux: source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-For a fresh setup, place the UCI course CSV files in `data/raw/`; see
-[data/README.md](data/README.md) for the official download source and file instructions.
-
-## Running Locally
-
-```bash
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
 streamlit run app.py
 ```
 
-## Usage
+On macOS/Linux, activate with `source .venv/bin/activate`. The app starts with the local
+Portuguese dataset selected. Select Mathematics or upload a CSV from the sidebar to change data.
+Uploaded files are validated and held in memory; EduLens does not write them to disk.
 
-1. Choose a dataset in the sidebar (UCI or upload a CSV).
-2. Walk through the pages from **Overview** to **Model Evaluation**.
-3. Adjust the performance threshold, confidence level and α in **Settings**.
-4. Read the interpretation and assumptions shown with each result.
+## Test and style checks
 
-## Project Structure
-
-```
-edulens/
-├── app.py
-├── views/        # page UI
-├── src/          # statistics, probability, models, visualization, UI helpers
-├── data/         # raw / processed
-├── models/  assets/  tests/  docs/
-└── *.md          # PRD, ARCHITECTURE, DATASET, STATISTICAL_METHODS, DESIGN, REQUIREMENTS
+```powershell
+python -m pytest --cov=src --cov-report=term-missing
+ruff check .
+black --check .
 ```
 
-## Example Analysis
+The test suite includes hand-checkable statistical fixtures, cross-checks against scientific
+Python libraries, real-data assertions limited to verified properties, and Streamlit AppTest
+smoke coverage for every route using both the Portuguese data and an invalid CSV.
 
-_To be written after implementation, using actual outputs from the app._
+## Project structure
 
-## Results
+```text
+app.py              Streamlit setup, navigation, shared sidebar and dataset loading
+views/              UI scripts for the 11 pages
+views/_analysis.py  cached model analysis helpers
+src/                data validation, statistical methods, models and chart builders
+data/raw/           supplied UCI source data
+models/             generated model artifacts (git-ignored)
+tests/              unit, real-data and AppTest coverage
+docs/               example analysis and manual screenshot checklist
+```
 
-_Placeholder. No metrics are reported until the analysis has been run and verified._
+The app uses `st.navigation`/`st.Page`; statistical calculations belong to `src/`. See
+[ARCHITECTURE.md](ARCHITECTURE.md).
 
-## Limitations
+## Dataset citation
 
-- Two Portuguese secondary schools; findings may not generalize.
-- Observational data: associations, not causes.
-- Self-reported variables; ordinal scales.
-- Predictions are probabilistic estimates and unsuitable for high-stakes decisions.
+Cortez, P. (2008). *Student Performance*. UCI Machine Learning Repository.
+[DOI: 10.24432/C5TG7T](https://doi.org/10.24432/C5TG7T). Dataset license: CC BY 4.0.
+See [DATASET.md](DATASET.md) for attribution, data limitations and variable details.
 
-## Ethical Use
+## Example analysis
 
-Performance is multifactorial; predictions are estimates; do not label students or use EduLens for grading, admissions or similar decisions. Survey data collection (future) must be anonymous, minimal and consent-based.
+Reproducible outputs and the exact calls that generated them are recorded in
+[docs/EXAMPLE_ANALYSIS.md](docs/EXAMPLE_ANALYSIS.md).
 
-## Future Improvements
+## Ethics and limitations
 
-College survey dataset · Math + Portuguese combined analysis (after checking overlap) · Bayesian models · calibration plots · PDF report export.
-
-## Roadmap
-
-See [ROADMAP.md](ROADMAP.md).
-
-## Contributors
-
-_Placeholder: team member names._
+The dataset covers two Portuguese secondary schools, includes sensitive student and family
+attributes, and contains observational records. Results may not generalize to other settings.
+EduLens is for educational statistical exploration, not grading, admissions or other high-stakes
+individual decisions. Predictions are statistical estimates, not guarantees.
 
 ## License
 
-Project code license: MIT. UCI data is CC BY 4.0; give attribution as described in
-[DATASET.md](DATASET.md).
+Project code: MIT. Dataset: CC BY 4.0; cite the source above.
