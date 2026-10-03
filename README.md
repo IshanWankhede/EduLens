@@ -12,7 +12,8 @@
 
 </div>
 
-> **Status:** Phase 1 repository setup. Analysis features and pages have not been implemented; sections below describe the approved plan. Nothing here reports real results.
+> **Status:** Phase 2 (dataset ingestion and cleaning). Statistical analysis features and UI pages
+> have not been implemented; sections below describe the approved plan. No analysis results are reported.
 
 ## About
 
@@ -76,7 +77,8 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Download the UCI data into `data/raw/` (see `data/README.md`, to be added in Phase 2).
+For a fresh setup, place the UCI course CSV files in `data/raw/`; see
+[data/README.md](data/README.md) for the official download source and file instructions.
 
 ## Running Locally
 

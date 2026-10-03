@@ -1,6 +1,8 @@
 # EduLens: Dataset
 
-All facts below come from the official UCI page, retrieved while preparing this document. Items marked **[VERIFY]** are not stated on that page and must be confirmed after downloading the files (Phase 2); they are not assumed.
+Official repository facts below are attributed to the UCI page and the supplied `student.txt`.
+Measured file facts below were computed from the local raw files during Phase 2. The supplied
+files were not downloaded again.
 
 ## 1. Identification
 
@@ -33,7 +35,40 @@ UCI describes data from **secondary education at two Portuguese schools** (Gabri
 - `student-mat.csv`: Mathematics course
 - `student-por.csv`: Portuguese language course
 
-**[VERIFY]** Row counts per file, delimiter (expected to be semicolon-separated, to be confirmed), and the exact file contents inside `student.zip`. The 649 total listed by UCI should be matched with the row count of the file we load. EduLens v1 default: the Portuguese file; the Mathematics file is optional. The two files are **not** treated as one combined sample unless overlap between students is investigated and documented **[VERIFY whether students overlap and how it is identifiable]**.
+The local `data/raw/` copy contains `student-por.csv`, `student-mat.csv`, `student.txt`, and
+`student-merge.R` (plus the repository placeholder). The extracted files were inspected directly.
+Both CSVs contain only ASCII bytes and decode strictly as UTF-8; since ASCII is also valid in
+several encodings, the original encoding cannot be uniquely identified from these bytes alone.
+Both are semicolon-delimited. The Portuguese file has 649 rows and 33 columns, matching UCI's
+listed instance count; the Mathematics file has 395 rows and 33 columns.
+
+The exact member listing of the official download archive was not independently verified: no
+archive is present locally, and Phase 2 explicitly did not download it again. The
+local extracted-file inventory is recorded in `data/README.md`. The acquisition link remains the
+official UCI download.
+
+EduLens v1 uses `student-por.csv` as the primary file; `student-mat.csv` is optional and is loaded
+separately. Following the keys in `student-merge.R`, a join on shared profile attributes yields
+382 matched join rows from 366 shared key groups. Of those groups, 358 are one-to-one across files
+and 8 have repeated key values in at least one file. The key identifies matching attribute
+profiles, not a unique person identifier; therefore, the join count cannot prove 382 distinct
+students. No combined dataset is created.
+
+### Phase 2 file checks
+
+Encoding was tested by strict decoding, and the delimiter was detected from the CSV header.
+Missing values count cells; exact duplicates count rows after the first identical row. Performance
+categories use the project-approved fixed G3 bands: Low `< 10`, Medium `10–13` inclusive, and High
+`>= 14`.
+
+| Course file | Rows × columns | G3 range | G3 = 0 | Absences range | Missing cells | Exact duplicate rows | Low | Medium | High |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| `student-por.csv` | 649 × 33 | 0–19 | 15 | 0–32 | 0 | 0 | 100 | 355 | 194 |
+| `student-mat.csv` | 395 × 33 | 0–20 | 38 | 0–75 | 0 | 0 | 130 | 165 | 100 |
+
+Rows with `G3 = 0` are retained unchanged. The cleaned in-memory frame adds `G3_zero_flag` so
+these records can be identified without silently excluding them. Neither outliers nor duplicate
+rows are removed by Phase 2.
 
 ## 3. Variables (as documented by UCI)
 
@@ -73,7 +108,15 @@ UCI describes data from **secondary education at two Portuguese schools** (Gabri
 | 32 | G2 | Second-period grade, 0–20 | Integer | **Model B only** |
 | 33 | G3 | Final grade, 0–20 (UCI: "output target") | Integer | **target** |
 
-Grades relate to the course subject (Math or Portuguese). Observed ranges for each file are **[VERIFY]** after loading.
+Grades relate to the course subject (Math or Portuguese). The observed G3 ranges are 0–19 for
+Portuguese and 0–20 for Mathematics, as shown in the Phase 2 file-check table.
+
+`student.txt` contains all 33 variable names represented in this table. Its descriptions are
+compatible with this table's condensed descriptions. The text calls the coded education, travel,
+study-time, failure, family-relation, leisure, going-out, alcohol, and health measures "numeric";
+EduLens classifies these ordered codes as ordinal. The file repeats the number `31` for G1 and G2,
+then labels G3 as `32`; this table numbers them sequentially as 31, 32, and 33. No other variable
+name or value-definition discrepancy was found in the supplied variable description.
 
 ## 4. Target and G1/G2/G3
 
@@ -83,19 +126,22 @@ Grades relate to the course subject (Math or Portuguese). Observed ranges for ea
 
 ## 5. Performance Categories
 
-Categories are derived from G3. Thresholds are configurable. Candidate methods (decision pending in Phase 2):
+Categories are derived from G3 using the project-selected fixed bands:
 
-1. **Fixed bands on the 0–20 scale** (for example, a pass boundary and a "high" boundary). Requires a written justification; the pass mark and any grade-band convention should be cited from a source, not assumed.
-2. **Data-driven quantiles** (for example, terciles of G3). Balanced classes, but thresholds depend on the sample.
+**Low** `< 10`, **Medium** `10–13` inclusive, **High** `>= 14`.
 
-No default is final until the choice is documented in `STATISTICAL_METHODS.md`.
+These are EduLens analysis categories, not asserted as an official grading or pass convention. The
+configured method and cutoffs are returned with derived categories; class counts are computed from
+the loaded course file.
 
 ## 6. Data Quality Notes
 
 - UCI lists no missing values; EduLens still runs checks and reports counts.
 - Duplicate check: rows are not guaranteed unique identifiers; exact duplicate rows are reported, not silently dropped.
-- G3 = 0 records: inspect count and pattern (**[VERIFY]**) before deciding on handling (keep, flag, or run sensitivity analysis).
-- `absences` has a long right tail (range to 93 per UCI); inspect with IQR rule and report.
+- G3 = 0 records: 15 in Portuguese and 38 in Mathematics. They are retained and flagged in the
+  in-memory cleaned frame; no sensitivity-analysis behavior is added in this phase.
+- Observed `absences` ranges are 0–32 in Portuguese and 0–75 in Mathematics (the broader UCI
+  variable description allows values up to 93); inspect outliers with the IQR rule and report.
 - The UCI page text shows encoding artifacts in dashes (e.g., "â€“"); this only affects the web text, but CSV encoding should be checked on load.
 - Ordinal coded variables (1–5 scales) are not true interval data; treatment (ordinal vs numeric) is stated wherever used.
 
@@ -109,16 +155,24 @@ No default is final until the choice is documented in `STATISTICAL_METHODS.md`.
 
 ## 8. Limitations
 
-- Two Portuguese secondary schools; data from the period around the 2008 paper (collection dates **[VERIFY]**).
+- Two Portuguese secondary schools; the supplied local files do not state collection dates. The
+  associated 2008 paper is not sufficient evidence to assert exact collection dates.
 - Self-reported questionnaire variables (study time, health, alcohol) may be biased.
 - Binned variables (study time, travel time) lose detail.
 - Subject-specific grades; results for Math and Portuguese may differ.
-- Potential student overlap between the two files **[VERIFY]**.
+- The supplied R script matches files on 13 shared attributes; its inner join yields 382 rows.
+  Because 8 shared key groups are non-unique, this is not conclusive identification of distinct
+  students. The files remain separate.
 - Observational data; confounding is likely.
 
-## 9. Acquisition Instructions (to be finalized in Phase 2)
+## 9. Acquisition Instructions
 
-1. Download the zip from the official link above.
-2. Extract into `data/raw/` and record file checksums in `data/README.md`.
-3. Do not edit raw files; cleaning produces files in `data/processed/`.
-4. Alternative: the `ucimlrepo` package (`fetch_ucirepo(id=320)`) per UCI; **[VERIFY]** whether it returns both course files or a single table before relying on it.
+1. For a fresh local setup, download the zip from the official link above and extract its course
+   files into `data/raw/`. In the current workspace, the requested source files were already
+   present and were not downloaded again.
+2. See `data/README.md` for the supplied local-file inventory and SHA-256 checksums. The archive
+   member list was not independently inspected because the archive was not downloaded.
+3. Do not edit raw files; cleaning produces in-memory output in Phase 2, and processed files are
+   only written by a later explicit workflow.
+4. EduLens reads the individual course CSV files directly. The `ucimlrepo` retrieval behavior was
+   not tested and is not relied on.
