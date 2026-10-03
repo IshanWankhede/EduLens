@@ -174,7 +174,14 @@ the loaded course file.
    present and were not downloaded again.
 2. See `data/README.md` for the supplied local-file inventory and SHA-256 checksums. The archive
    member list was not independently inspected because the archive was not downloaded.
-3. Do not edit raw files; cleaning produces in-memory output in Phase 2, and processed files are
-   only written by a later explicit workflow.
-4. EduLens reads the individual course CSV files directly. The `ucimlrepo` retrieval behavior was
+3. Raw files are not edited by the app or export command. Phase 2 cleaning is normally in-memory;
+   to explicitly write the cleaned Portuguese dataset, run `python -m src.export_cleaned` from
+   the repository root. It reads `data/raw/student-por.csv` through the existing loading/cleaning
+   pipeline and overwrites `data/processed/student-por-cleaned.csv`, creating the processed
+   directory if needed. The CSV includes `G3_zero_flag`; the command reports its row count, column
+   count, flag count, and output path. The generated processed file is git-ignored and may be
+   regenerated or removed without affecting the raw source.
+4. If `data/raw/student-por.csv` is missing, the export command reports a friendly error and exits
+   unsuccessfully without a traceback.
+5. EduLens reads the individual course CSV files directly. The `ucimlrepo` retrieval behavior was
    not tested and is not relied on.

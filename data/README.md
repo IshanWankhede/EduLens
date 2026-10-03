@@ -26,7 +26,17 @@ from the file contents alone; the loader decodes them as UTF-8.
 
 The data loader never joins the course datasets. It accepts uploaded CSV bytes in memory and does
 not write uploaded content to disk. Uploaded CSVs must contain at least 20 data rows by default.
-For measured data-quality and class-count details, see
+To explicitly regenerate the cleaned Portuguese export, run this command from the repository root:
+
+```powershell
+python -m src.export_cleaned
+```
+
+The command uses the Phase 2 loader and cleaning pipeline and overwrites
+`data/processed/student-por-cleaned.csv`, creating `data/processed/` if needed. The output includes
+the derived `G3_zero_flag` column. The raw files under `data/raw/` are read-only inputs to the
+export and are never rewritten. Processed outputs are git-ignored and can be regenerated at any
+time. For measured data-quality and class-count details, see
 [`../DATASET.md`](../DATASET.md).
 
 ## SHA-256 checksums
