@@ -12,7 +12,7 @@
 
 </div>
 
-> **Status:** Phase 4 (exploratory analysis and visualization). Streamlit pages have not been
+> **Status:** Phase 5 (probability analysis and correlation). Streamlit pages have not been
 > implemented; sections below describe the approved plan. No analysis results are reported.
 
 ## About

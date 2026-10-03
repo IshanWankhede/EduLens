@@ -81,7 +81,7 @@ Notation: n = sample size, x̄ = sample mean, s = sample SD, α = significance l
 - **Formula:** r = Σ(xᵢ − x̄)(yᵢ − ȳ) / √[Σ(xᵢ − x̄)² Σ(yᵢ − ȳ)²]; test statistic t = r√(n−2)/√(1−r²) with n−2 df.
 - **Assumptions:** Numeric, linear relationship, no extreme outliers, approximate bivariate normality for the p-value, independent observations.
 - **Variables:** G1/G2/G3, absences, age and other numeric pairs.
-- **Interpretation:** "r indicates a [weak/moderate/strong] [positive/negative] linear association; this does not show that one variable causes the other." Strength labels (documented rule of thumb, e.g., |r| < 0.3 weak, 0.3–0.5 moderate, > 0.5 strong) are conventions, displayed with the label.
+- **Interpretation:** "r indicates a [weak/moderate/strong] [positive/negative] linear association; this does not show that one variable causes the other." Strength labels use the rule of thumb |r| < 0.3 weak, 0.3 ≤ |r| ≤ 0.5 moderate, and |r| > 0.5 strong; these are conventions, displayed with the label.
 - **Implementation:** `scipy.stats.pearsonr` with CI via Fisher z-transform.
 
 ### 10. Spearman Correlation
@@ -102,6 +102,7 @@ Notation: n = sample size, x̄ = sample mean, s = sample SD, α = significance l
 - **Variables:** A = "High performance" (G3 ≥ configurable threshold); B = studytime group, absence group, failures = 0, high previous grade, etc.
 - **Interpretation:** "Among the n(B) students in condition B, n(A∩B) were high performers, so the estimated P(A|B) = …". Compared with P(A) to describe association (not causation). Independence check: A and B are independent if P(A|B) = P(A).
 - **Implementation:** Counts first, then ratios; Wilson CI for proportions; explicit message when n(B) = 0 or very small.
+- **Small-condition rule:** "Very small" means n(B) < 5, configured as `SMALL_CONDITIONAL_SAMPLE_SIZE` in `src/config.py`; this is a warning about instability, not a prohibition on calculating the empirical estimate.
 
 ### 12. Bayes' Theorem
 - **Purpose:** Reverse conditioning, e.g., from P(High | study time) to P(study time | High).
