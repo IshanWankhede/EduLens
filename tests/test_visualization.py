@@ -23,6 +23,7 @@ from src.visualization import (
     histogram_plot,
     kde_plot,
     parental_education_vs_g3,
+    probability_bar_plot,
     qq_plot,
     scatter_plot,
     studytime_vs_g3,
@@ -204,6 +205,26 @@ def test_probability_bar_axis_is_zero_to_one_hundred_percent(edge_data: pd.DataF
 
     assert figure.layout.yaxis.range == (0, 100)
     assert figure.layout.yaxis.title.text == "Share of valid observations (%)"
+
+
+def test_probability_bar_plot_uses_fixed_percentage_scale_and_validates_distribution() -> None:
+    figure = probability_bar_plot(
+        {"Low": 0.2, "Medium": 0.5, "High": 0.3},
+        title="Estimated categories",
+        caption="Bars show estimated class probability.",
+    )
+
+    assert figure.layout.title.text == "Estimated categories"
+    assert figure.layout.xaxis.title.text == "Performance category"
+    assert figure.layout.yaxis.title.text == "Estimated probability (%)"
+    assert figure.layout.yaxis.range == (0, 100)
+    assert list(figure.data[0].y) == [20.0, 50.0, 30.0]
+    with pytest.raises(VisualizationInputError, match="sum to 1"):
+        probability_bar_plot(
+            {"Low": 0.2, "Medium": 0.5, "High": 0.2},
+            title="Invalid",
+            caption="Invalid",
+        )
 
 
 def test_theme_requires_title_labels_and_caption() -> None:

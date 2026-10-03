@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from typing import Literal
 
 import matplotlib.pyplot as plt
@@ -424,6 +424,48 @@ def bar_count_plot(
         or ("Category proportions" if probability else f"Counts of {_display_name(column)}"),
         x_label=_display_name(column),
         y_label=y_label,
+        caption=caption,
+    )
+
+
+def probability_bar_plot(
+    probabilities: Mapping[str, float],
+    *,
+    title: str,
+    caption: str,
+) -> go.Figure:
+    """Build a labeled probability bar chart with a fixed 0–100% vertical scale.
+
+    Values must be a non-empty probability distribution. A fixed percentage scale makes
+    differently predicted profiles directly comparable without visual autoscaling.
+    """
+    if not probabilities:
+        raise VisualizationInputError("A probability chart requires at least one class.")
+    labels = list(probabilities)
+    values = np.asarray(list(probabilities.values()), dtype=float)
+    if any(not label.strip() for label in labels):
+        raise VisualizationInputError("Every probability category requires a non-empty label.")
+    if not np.isfinite(values).all() or ((values < 0) | (values > 1)).any():
+        raise VisualizationInputError("Probability values must be finite and between 0 and 1.")
+    if not np.isclose(values.sum(), 1.0, rtol=1e-9, atol=1e-9):
+        raise VisualizationInputError("Class probabilities must sum to 1.")
+    figure = go.Figure(
+        go.Bar(
+            x=labels,
+            y=values * 100,
+            marker={
+                "color": COLORBLIND_SAFE_PALETTE[0],
+                "pattern": {"shape": ["/", "x", "."] * (len(labels) // 3 + 1)},
+            },
+            name="Estimated probability",
+        )
+    )
+    figure.update_yaxes(range=[0, 100], rangemode="tozero")
+    return apply_plotly_theme(
+        figure,
+        title=title,
+        x_label="Performance category",
+        y_label="Estimated probability (%)",
         caption=caption,
     )
 
