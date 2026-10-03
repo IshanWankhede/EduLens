@@ -184,8 +184,10 @@ Notation: n = sample size, x̄ = sample mean, s = sample SD, α = significance l
 - **Output:** Coefficients, SE, t, p, CI, R², adjusted R² = 1 − (1−R²)(n−1)/(n−p−1), F-test, residual SE.
 - **Assumptions:** Linearity; independent errors; homoscedasticity; approximately normal residuals (for small-sample inference); no severe multicollinearity; no highly influential points.
 - **Diagnostics:** Residuals vs fitted, Q–Q plot, scale–location, leverage/Cook's distance, VIF (concern flagged using a documented guideline, e.g., VIF > 5 or 10), Breusch–Pagan, Durbin–Watson (limited relevance for non-time data; noted).
+- **Implementation details:** VIF > 5 is used as a screening warning; Cook's distance > 4/n is flagged for inspection. HC3 robust covariance is an optional inference mode. Durbin–Watson is not calculated because these student rows are not a time-ordered series.
 - **Alternatives if violated:** Robust (HC) standard errors, transformations, removing/combining collinear predictors, ordinal/nonparametric methods.
 - **Coding:** Binary → 0/1 indicators; nominal → dummy with reference level shown; ordinal predictors treated as numeric or categorical (choice displayed).
+- **Model boundary:** G1/G2 are rejected for a G3 factor-only model; including either requires an explicit Model B option and the result is labeled accordingly.
 - **Variables:** Model A predictors exclude G1/G2. A Model B regression (with G1/G2) may be shown for comparison, labeled clearly.
 - **Interpretation template:** "Holding the other included variables constant, each one-step increase in studytime is associated with a β̂-point change in G3 (95% CI […, …], p = …)." Never "studytime raises grades by".
 - **Implementation:** `statsmodels.api.OLS` / formula API; diagnostics via `statsmodels.stats`.
