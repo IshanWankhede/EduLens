@@ -6,6 +6,7 @@ import hashlib
 import logging
 from pathlib import Path
 from typing import Literal
+from urllib.parse import urlsplit
 
 import streamlit as st
 
@@ -209,19 +210,6 @@ with st.sidebar:
             key="el_dataset_upload",
             on_change=_clear_dataset_cache,
         )
-    settings = _settings_sidebar()
-
-    st.divider()
-    st.markdown(
-        '<p class="el-source-note"><strong>Dataset citation</strong><br>'
-        "Cortez (2008), <em>Student Performance</em>, UCI Machine Learning Repository.<br>"
-        '<a href="https://doi.org/10.24432/C5TG7T">doi:10.24432/C5TG7T</a></p>',
-        unsafe_allow_html=True,
-    )
-
-bundle = _load_selected_bundle(dataset_choice, uploaded)
-st.session_state["edulens_dataset_bundle"] = bundle
-st.session_state["edulens_settings"] = settings
 
 pages = {
     "Start here": [
@@ -242,5 +230,73 @@ pages = {
     ],
     "About": [_page_config("about.py", "About", "ℹ️")],
 }
-navigation = st.navigation(pages, position="sidebar")
+
+navigation = st.navigation(pages, position="hidden")
+current_url = st.context.url
+if isinstance(current_url, bytes):
+    current_url = current_url.decode("utf-8")
+elif not isinstance(current_url, str):
+    current_url = ""
+active_route = urlsplit(current_url).path.rstrip("/").rsplit("/", 1)[-1]
+valid_routes = {
+    Path(script).stem
+    for script in (
+        "overview.py",
+        "dataset_explorer.py",
+        "descriptive_statistics.py",
+        "exploratory_analysis.py",
+        "correlation.py",
+        "probability.py",
+        "hypothesis_testing.py",
+        "regression.py",
+        "prediction.py",
+        "model_evaluation.py",
+        "about.py",
+    )
+}
+active_href = "" if active_route in {"", "overview"} else active_route
+if active_href not in valid_routes and active_href != "":
+    active_href = ""
+with st.sidebar:
+    with st.container(key="el-sidebar-navigation"):
+        st.markdown(
+            (
+                "<style>"
+                f'.st-key-el-sidebar-navigation a[data-testid="stPageLink-NavLink"]'
+                f'[href="{active_href}"], '
+                f'.st-key-el-sidebar-bottom a[data-testid="stPageLink-NavLink"]'
+                f'[href="{active_href}"]'
+                "{background:var(--gradient)!important;"
+                "border-color:rgba(255,255,255,.18)!important;"
+                "box-shadow:0 8px 24px rgba(148,93,151,.18),"
+                "inset 0 1px 0 rgba(255,255,255,.16)!important;"
+                "color:#fff!important;font-weight:700!important}"
+                "</style>"
+            ),
+            unsafe_allow_html=True,
+        )
+        for section, section_pages in pages.items():
+            if section == "About":
+                continue
+            st.markdown(
+                f'<p class="el-sidebar-heading">{section}</p>',
+                unsafe_allow_html=True,
+            )
+            for page in section_pages:
+                st.page_link(page, label=page.title, icon=page.icon)
+
+    with st.container(key="el-sidebar-bottom"):
+        st.page_link(pages["About"][0], label="About", icon=pages["About"][0].icon)
+        settings = _settings_sidebar()
+        st.markdown(
+            '<p class="el-source-note"><strong>Dataset citation</strong><br>'
+            "Cortez (2008), <em>Student Performance</em>, UCI Machine Learning Repository.<br>"
+            '<a href="https://doi.org/10.24432/C5TG7T">doi:10.24432/C5TG7T</a></p>',
+            unsafe_allow_html=True,
+        )
+
+bundle = _load_selected_bundle(dataset_choice, uploaded)
+st.session_state["edulens_dataset_bundle"] = bundle
+st.session_state["edulens_settings"] = settings
+
 navigation.run()
