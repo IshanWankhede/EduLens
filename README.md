@@ -5,14 +5,14 @@
 
 *Discover the factors. Understand the patterns. Predict the probability.*
 
-![Python](https://img.shields.io/badge/Python-3.x-blue)
+![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![Streamlit](https://img.shields.io/badge/Built%20with-Streamlit-FF4B4B)
 ![Status](https://img.shields.io/badge/Status-In%20development-orange)
-![License](https://img.shields.io/badge/License-TBD-lightgrey)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
 </div>
 
-> **Status:** Phase 1 (documentation). Implementation has not started; sections below describe the planned system. Nothing here reports real results yet.
+> **Status:** Phase 1 repository setup. Analysis features and pages have not been implemented; sections below describe the approved plan. Nothing here reports real results.
 
 ## About
 
@@ -136,4 +136,5 @@ _Placeholder: team member names._
 
 ## License
 
-_To be decided._ (UCI data is CC BY 4.0; give attribution as described in DATASET.md.)
+Project code license: MIT. UCI data is CC BY 4.0; give attribution as described in
+[DATASET.md](DATASET.md).
