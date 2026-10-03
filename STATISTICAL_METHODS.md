@@ -158,7 +158,7 @@ Notation: n = sample size, x̄ = sample mean, s = sample SD, α = significance l
 - **Checks:** Shapiro–Wilk on residuals, Levene's test, group sizes.
 - **Effect size:** η² = SS_between / SS_total.
 - **Alternatives if violated:** Welch's ANOVA (unequal variances), Kruskal–Wallis (non-normal/ordinal).
-- **Post-hoc:** Tukey HSD if ANOVA significant (documented); with Kruskal–Wallis use Dunn's test with correction **[VERIFY availability of Dunn's test in the chosen library; otherwise document alternative]**.
+- **Post-hoc:** Tukey HSD if classical ANOVA is significant. This implementation does not provide Dunn pairwise testing: Kruskal–Wallis is reported as a nonparametric omnibus alternative only, so pairwise nonparametric follow-up requires a separately chosen and documented multiplicity-corrected method.
 - **Interpretation template:** "F(df₁, df₂) = …, p = …. [Sufficient/Insufficient] evidence that not all group means are equal. Post-hoc comparisons indicate which pairs differ (adjusted p-values)." Group means shown in a table with CIs.
 - **Implementation:** `scipy.stats.f_oneway`, `statsmodels` `anova_lm`, `pairwise_tukeyhsd`.
 
