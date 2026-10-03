@@ -12,7 +12,7 @@
 
 </div>
 
-> **Status:** Phase 3 (descriptive statistics). Exploratory analysis and UI pages have not been
+> **Status:** Phase 4 (exploratory analysis and visualization). Streamlit pages have not been
 > implemented; sections below describe the approved plan. No analysis results are reported.
 
 ## About
