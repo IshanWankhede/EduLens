@@ -16,6 +16,9 @@ dataset. It reports descriptive statistics, empirical probabilities, association
 tests, regression estimates and classification performance. The observational data do not
 establish causation, and individual model probabilities are not guaranteed outcomes.
 
+**Team:** EDULENS-TEAM
+**Repository:** https://github.com/IshanWankhede/EduLens
+
 ## Features
 
 - Overview and dataset explorer with search, filters, data types, missingness, cleaning report and
@@ -52,15 +55,26 @@ filenames. No screenshots are generated or represented as actual app captures by
 ## Requirements
 
 - Python 3.11
-- The supplied local files in `data/raw/` for offline use. Their inventory, source and checksums
-  are documented in [data/README.md](data/README.md).
-- Internet access is not required when the local dataset files are present.
+- The UCI dataset files in `data/raw/` (see "Get the dataset" below). Their inventory, source and
+  checksums are documented in [data/README.md](data/README.md).
+- Internet access is not required once the dataset files are present locally.
+
+## Get the dataset
+
+The raw data files are not stored in this repository (`data/raw/` is git-ignored).
+
+1. Download the official zip:
+   https://archive.ics.uci.edu/static/public/320/student+performance.zip
+   (dataset page: https://archive.ics.uci.edu/dataset/320/student+performance).
+2. Unzip it. If another zip is inside, unzip that too.
+3. Copy `student-por.csv` and `student-mat.csv` (plus `student.txt` and `student-merge.R` for
+   reference) into `data/raw/`.
 
 ## Install and run
 
-From the repository root:
-
 ```powershell
+git clone https://github.com/IshanWankhede/EduLens.git
+cd EduLens
 py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
@@ -70,6 +84,15 @@ streamlit run app.py
 On macOS/Linux, activate with `source .venv/bin/activate`. The app starts with the local
 Portuguese dataset selected. Select Mathematics or upload a CSV from the sidebar to change data.
 Uploaded files are validated and held in memory; EduLens does not write them to disk.
+
+### Optional: export the cleaned dataset
+
+```powershell
+python -m src.export_cleaned
+```
+
+This writes `data/processed/student-por-cleaned.csv` (cleaned data plus the `G3_zero_flag`
+column). The raw files are not modified.
 
 ## Test and style checks
 
@@ -90,7 +113,8 @@ app.py              Streamlit setup, navigation, shared sidebar and dataset load
 views/              UI scripts for the 11 pages
 views/_analysis.py  cached model analysis helpers
 src/                data validation, statistical methods, models and chart builders
-data/raw/           supplied UCI source data
+data/raw/           UCI source data (downloaded manually, git-ignored)
+data/processed/     cleaned data export (git-ignored)
 models/             generated model artifacts (git-ignored)
 tests/              unit, real-data and AppTest coverage
 docs/               example analysis and manual screenshot checklist
@@ -98,6 +122,12 @@ docs/               example analysis and manual screenshot checklist
 
 The app uses `st.navigation`/`st.Page`; statistical calculations belong to `src/`. See
 [ARCHITECTURE.md](ARCHITECTURE.md).
+
+## Documentation
+
+[PRD.md](PRD.md) · [REQUIREMENTS.md](REQUIREMENTS.md) · [ARCHITECTURE.md](ARCHITECTURE.md) ·
+[DATASET.md](DATASET.md) · [STATISTICAL_METHODS.md](STATISTICAL_METHODS.md) ·
+[DESIGN.md](DESIGN.md) · [ROADMAP.md](ROADMAP.md) · [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## Dataset citation
 
@@ -117,6 +147,13 @@ attributes, and contains observational records. Results may not generalize to ot
 EduLens is for educational statistical exploration, not grading, admissions or other high-stakes
 individual decisions. Predictions are statistical estimates, not guarantees.
 
+Known implementation gaps are listed in [REQUIREMENTS.md](REQUIREMENTS.md) (items marked
+Partial or Not done).
+
+## Contributors
+
+EDULENS-TEAM
+
 ## License
 
-Project code: MIT. Dataset: CC BY 4.0; cite the source above.
+Project code: [MIT](LICENSE). Dataset: CC BY 4.0; cite the source above.
