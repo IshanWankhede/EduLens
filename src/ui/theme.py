@@ -6,6 +6,20 @@ from pathlib import Path
 
 import streamlit as st
 
+THEME_TOKENS = {
+    "background": "#111014",
+    "surface": "#19171D",
+    "card": "#211E25",
+    "border": "rgba(245, 230, 248, 0.12)",
+    "primary": "#D9B4F2",
+    "secondary": "#E2A6C7",
+    "text": "#F5F1F5",
+    "muted": "#B9AFBB",
+    "gradient": "linear-gradient(135deg, #6F5278 0%, #855F7F 54%, #604762 100%)",
+    "shadow": "0 18px 50px rgba(0, 0, 0, 0.36)",
+    "radius": "22px",
+}
+
 
 def load_theme() -> None:
     """Inject the repository stylesheet once per Streamlit run."""

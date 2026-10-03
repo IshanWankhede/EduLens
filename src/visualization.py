@@ -15,19 +15,21 @@ from scipy import stats
 from src import config
 
 COLORBLIND_SAFE_PALETTE = (
-    "#6366F1",
-    "#22D3EE",
-    "#FBBF24",
-    "#D946EF",
-    "#34D399",
-    "#F97316",
+    "#D9B4F2",
+    "#77D6B1",
+    "#F2C879",
+    "#E2A6C7",
+    "#9FC8E8",
+    "#E7958F",
 )
 MARKER_SYMBOLS = ("circle", "square", "diamond", "triangle-up", "cross", "x")
-_TITLE_FONT = "Inter, system-ui, sans-serif"
-_TEXT_COLOR = "#E8ECF8"
-_MUTED_COLOR = "#A3ADC8"
-_GRID_COLOR = "rgba(163, 173, 200, 0.18)"
-_MATPLOTLIB_GRID_COLOR = (163 / 255, 173 / 255, 200 / 255, 0.18)
+_TITLE_FONT = "Inter, Plus Jakarta Sans, system-ui, sans-serif"
+_TEXT_COLOR = "#F5F1F5"
+_MUTED_COLOR = "#B9AFBB"
+_GRID_COLOR = "rgba(185, 175, 187, 0.11)"
+_PLUM_LINE = "#E7C8F2"
+_PLUM_FILL = "rgba(194, 142, 185, 0.20)"
+_MATPLOTLIB_GRID_COLOR = (185 / 255, 175 / 255, 187 / 255, 0.12)
 
 
 class VisualizationInputError(ValueError):
@@ -42,11 +44,11 @@ def apply_plotly_theme(
     y_label: str,
     caption: str,
 ) -> go.Figure:
-    """Apply the EduLens dark chart style and attach a visible, plain-English caption.
+    """Apply the EduLens charcoal/plum chart style and attach its plain-English caption.
 
-    Colors follow the proposed DESIGN.md midnight/indigo/cyan/amber palette. Plot traces should
-    pair colors with markers, category labels, or patterns so a distinction is not conveyed by
-    color alone.
+    Surfaces are transparent over the app's glass panel, with a muted dark tooltip and minimal
+    grid. Plot traces should pair colors with markers, category labels, or patterns so a distinction
+    is not conveyed by color alone.
     """
     if not title.strip() or not x_label.strip() or not y_label.strip() or not caption.strip():
         raise VisualizationInputError("Every chart requires a title, axis labels, and a caption.")
@@ -68,10 +70,18 @@ def apply_plotly_theme(
     figure.update_layout(
         title={"text": title, "x": 0.02, "xanchor": "left", "font": {"family": _TITLE_FONT}},
         font={"family": _TITLE_FONT, "color": _TEXT_COLOR},
+        colorway=list(COLORBLIND_SAFE_PALETTE),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         margin={"l": 60, "r": 28, "t": 72, "b": 108},
         legend={"title": {"text": ""}, "orientation": "h", "y": -0.24},
+        hoverlabel={
+            "bgcolor": "#211E25",
+            "bordercolor": "rgba(245, 230, 248, 0.20)",
+            "font": {"family": _TITLE_FONT, "color": _TEXT_COLOR},
+        },
+        hovermode="closest",
+        transition={"duration": 0},
         xaxis={
             "title": {"text": x_label},
             "gridcolor": _GRID_COLOR,
@@ -102,7 +112,8 @@ def apply_matplotlib_theme(
     """Apply the shared EduLens palette and accessible labels to a static Matplotlib figure."""
     if not title.strip() or not x_label.strip() or not y_label.strip() or not caption.strip():
         raise VisualizationInputError("Every chart requires a title, axis labels, and a caption.")
-    axis.set_facecolor("#11172E")
+    axis.set_facecolor("#19171D")
+    figure.patch.set_alpha(0)
     axis.set_title(title, color=_TEXT_COLOR)
     axis.set_xlabel(x_label, color=_MUTED_COLOR)
     axis.set_ylabel(y_label, color=_MUTED_COLOR)
@@ -207,14 +218,38 @@ def kde_plot(
     upper = float(values.max())
     padding = (upper - lower) * 0.08
     x_values = np.linspace(lower - padding, upper + padding, 256)
+    density_values = density(x_values)
+    peak_index = int(np.argmax(density_values))
     figure = go.Figure(
-        go.Scatter(
-            x=x_values,
-            y=density(x_values),
-            mode="lines",
-            line={"color": COLORBLIND_SAFE_PALETTE[1], "width": 3, "dash": "solid"},
-            name="Kernel density estimate",
-        )
+        [
+            go.Scatter(
+                x=x_values,
+                y=density_values,
+                mode="lines",
+                line={"color": _PLUM_LINE, "width": 2, "shape": "spline", "smoothing": 0.65},
+                fill="tozeroy",
+                fillcolor=_PLUM_FILL,
+                hovertemplate="Value: %{x:.3g}<br>Density: %{y:.4f}<extra></extra>",
+                name="Kernel density estimate",
+            ),
+            go.Scatter(
+                x=[x_values[peak_index]],
+                y=[density_values[peak_index]],
+                mode="markers",
+                marker={
+                    "color": _PLUM_LINE,
+                    "size": 9,
+                    "line": {"color": "#211E25", "width": 2},
+                    "symbol": "circle",
+                },
+                hovertemplate=(
+                    "<b>Highest estimated density</b><br>"
+                    "Value: %{x:.3g}<br>Density: %{y:.4f}<extra></extra>"
+                ),
+                showlegend=False,
+                name="Highest estimated density",
+            ),
+        ]
     )
     return apply_plotly_theme(
         figure,
@@ -604,7 +639,7 @@ def scatter_plot(
                     y=slope * ordered_x + intercept,
                     mode="lines",
                     name="Linear trend (association)",
-                    line={"color": COLORBLIND_SAFE_PALETTE[2], "width": 2, "dash": "dash"},
+                    line={"color": _PLUM_LINE, "width": 1.8, "dash": "dash"},
                 )
             )
         actual_caption = caption or (

@@ -9,6 +9,7 @@ import pytest
 from streamlit.testing.v1 import AppTest
 
 PAGE_PATHS = (
+    "views/home.py",
     "views/overview.py",
     "views/dataset_explorer.py",
     "views/descriptive_statistics.py",
@@ -38,6 +39,31 @@ def test_every_page_loads_with_portuguese_dataset(page_path: str) -> None:
     assert not app.exception, [element.message for element in app.exception]
     assert app.title or app.header or app.markdown
     assert app.session_state["edulens_dataset_bundle"].metadata.file_name == "student-por.csv"
+
+
+def test_home_is_default_and_shows_data_computed_live_metrics() -> None:
+    app = AppTest.from_file(str(APP_PATH), default_timeout=300).run()
+
+    assert not app.exception, [element.message for element in app.exception]
+    assert any("Understand What Shapes Student Performance" in item.value for item in app.markdown)
+    assert any(
+        "Discover the factors. Understand the patterns. Predict the probability." in item.value
+        for item in app.markdown
+    )
+    home_content = "\n".join(item.value for item in app.markdown)
+    assert all(
+        value in home_content
+        for value in (
+            "Students",
+            "649",
+            "Variables",
+            "33",
+            "Mean final grade · G3",
+            "11.91",
+            "High performance",
+            "29.9%",
+        )
+    )
 
 
 @pytest.mark.parametrize("page_path", PAGE_PATHS)
