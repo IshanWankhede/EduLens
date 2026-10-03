@@ -179,7 +179,7 @@ def _page_config(
         str(Path(__file__).resolve().parent / "views" / script),
         title=title,
         icon=icon,
-        default=script == "overview.py",
+        default=script == "home.py",
     )
 
 
@@ -213,6 +213,7 @@ with st.sidebar:
 
 pages = {
     "Start here": [
+        _page_config("home.py", "Home", "🏡"),
         _page_config("overview.py", "Overview", "🏠"),
         _page_config("dataset_explorer.py", "Dataset Explorer", "🗂️"),
     ],
